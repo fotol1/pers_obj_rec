@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hi, {{current_user.name}}!</h1>
+
+<p> We know the following objects: </p>
+{% for movie in movies %}
+<div><p>{{movie.score}} {{movie.item_id}} </p></div>
+{% endfor %}
+{% endblock %}
