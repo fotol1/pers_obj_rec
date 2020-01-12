@@ -10,7 +10,8 @@ class BaseRecommender:
         pass
 
     def score(self,user_id, items_id):
-        scores = [self.model.predict(user_id, item_id) for item_id in items_is]
+        print(user_id,items_id)
+        scores = [self.predict(user_id, item_id) for item_id in items_id]
         return scores
 
 class DumnRecommender(BaseRecommender):
@@ -33,20 +34,20 @@ class ALSRecommender(BaseRecommender):
             user_path='recommenders/als_user_factors',
             item_path='recommenders/als_item_factors'):
         self.model.fit(rating_matrix)
-        np.save(user_path, self.user_factors)
-        np.save(item_path, self.item_factors)
+        np.save(user_path, self.model.user_factors)
+        np.save(item_path, self.model.item_factors)
 
 
     def load(self,
             user_path='recommenders/als_user_factors.npy',
             item_path='recommenders/als_item_factors.npy'):
 
-        self.user_factors = np.load(user_path)
-        self.item_factors = np.load(item_path)
+        self.user_factors = np.load(user_path,allow_pickle=True)
+        self.item_factors = np.load(item_path,allow_pickle=True)
 
     def predict(self, user_id, item_id):
 
         if self.user_factors is None or self.item_factors is None:
             raise ValueError('The model is not loaded')
 
-        return (self.user_factors[user_id] * self.item_factors[item_id]).sum()
+        return (self.user_factors[int(user_id)] * self.item_factors[item_id]).sum()
