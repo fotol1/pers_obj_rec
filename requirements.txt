@@ -1,5 +1,5 @@
 implicit==0.4.2
-Flask==1.0.0
+Flask==1.1.1
 flask-wtf
 flask-sqlalchemy
 sqlalchemy-migrate
