@@ -1,3 +1,4 @@
+implicit==0.4.2
 Flask==0.11.0
 flask-wtf
 flask-sqlalchemy
@@ -6,4 +7,4 @@ flask-openid
 flask-migrate
 flask-login
 numpy==1.17.4
-
+scipy==1.3.1

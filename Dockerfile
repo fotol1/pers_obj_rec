@@ -7,15 +7,15 @@ RUN apt-get update -y && \
 COPY ./requirements.txt /app/requirements.txt
 
 WORKDIR /app
-
+RUN pip3 install --upgrade setuptools
 RUN pip3 install -r requirements.txt
 
 COPY . /app
 
-#ENTRYPOINT [ "python3" ]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT [ "python3" ]
+#ENTRYPOINT ["/bin/bash"]
 ENV LC_ALL="C.UTF-8"
 ENV LANG="C.UTF-8"
 ENV FLASK_APP="run.py"
 
-#CMD [ "run.py" ]
+CMD [ "run.py" ]

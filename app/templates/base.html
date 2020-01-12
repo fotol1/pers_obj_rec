@@ -3,30 +3,20 @@
     {% if title %}
     <title>{{title}} - microblog</title>
     {% else %}
-    <title>Personalized Object Recommender</title>
+    <title>Персонализированные рекомендации фильмов</title>
     {% endif %}
   </head>
   <body>
-    <div> <a href="/index">Home</a></div>
-    <hr>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-    {% for message in messages %}
-        <li>{{ message }} </li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
+
     {% block content %}{% endblock %}
 
         <div>
-        Microblog:
-        <a href="{{ url_for('index') }}">Home</a>
+
+        <a href="{{ url_for('index') }}">Домашняя страница</a>
         {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('login') }}">Войти</a>
         {% else %}
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('logout') }}">Выйти</a>
         {% endif %}
     </div>
 

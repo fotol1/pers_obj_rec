@@ -7,20 +7,23 @@ from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('SignffIn')
+    username = StringField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
+
+class Like(FlaskForm):
+    submit = SubmitField('Да!')
 
 
 class RegistrationForm(FlaskForm):
-    name = StringField('Username', validators=[DataRequired()])
+    name = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+        'Пароль еще раз', validators=[DataRequired()])
+    submit = SubmitField('Зарегистрироваться')
 
     def validate_username(self, name):
         user = User.query.filter_by(username=name.data).first()
         if user is not None:
-            raise ValidationError('Please use a different username.')
+            raise ValidationError('Такое имя уже используется')

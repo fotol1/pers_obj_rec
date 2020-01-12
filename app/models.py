@@ -44,6 +44,14 @@ class Provider(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64), index= True, unique = True)
 
+class Items_in_Provider(db.Model):
+
+    id = db.Column(db.Integer, primary_key = True)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
+    provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
+    valid_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    valid_to = db.Column(db.DateTime, index=True)
+
 
 class Score(db.Model):
 

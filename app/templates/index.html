@@ -1,9 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Hi, {{current_user.name}}!</h1>
 
-<p> We know the following objects: </p>
-{% for movie in movies %}
-<div><p>{{movie.score}} {{movie.item_id}} </p></div>
+{%if is_auth %}
+<h1>Привет, {{current_user.name}}!</h1>
+{% else %}
+<h1> Привет, незнакомец! </h1>
+Чтобы получить персонализированные рекомнедации необходимо
+<a href="{{ url_for('login') }}">Войти</a>/
+<a href="{{ url_for('register') }}">Зарегистрироваться</a>
+
+{% endif %}
+
+<h2><p> Кинотеатры </p></h2>
+{% for provider in providers %}
+<div><p><a href='/cinema?id={{provider.id}}'> {{provider.name}}</a></p></div>
 {% endfor %}
+
+
+{%if is_auth %}
+<h2><p> Вам нравится этот фильм? </p></h2>
+{{not_interacted_items_name.name}}
+{% endif %}
+
+
+<h2><p> Пользователи, похожие на Вас </p></h2>
+
+{% for user in similar_users %}
+<div><p>{{user}} </p></div>
+{% endfor %}
+
+
 {% endblock %}
