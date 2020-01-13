@@ -1,22 +1,30 @@
+# coding=utf-8
 from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from wtforms.validators import Required
 from app.models import User
 
 
 class LoginForm(FlaskForm):
+    """
+    Форма для авторизации пользователей сайта
+    """
     username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
 class Like(FlaskForm):
+    """
+    Форма для сбора предпочтений пользователей
+    """
     submit = SubmitField('Да!')
 
 
 class RegistrationForm(FlaskForm):
+    """
+    Форма регистрации на сайте
+    """
     name = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
