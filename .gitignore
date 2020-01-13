@@ -3,4 +3,4 @@ app/__pycache__/
 *.pyc
 *.ipynb_checkpoints
 *.ipynb
-_
+.idea/
