@@ -7,6 +7,6 @@ install:
   - pip install coverage
 # command to run tests
 script:
-  - coverage -m unittest tests/flask_test.py
+  - coverage run -m unittest tests/test_models.py
 after_success:
   - codecov
