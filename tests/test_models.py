@@ -34,8 +34,7 @@ class TestScoring(unittest.TestCase):
 
     def test_num_factors(self):
 
-        recommender = ALSRecommender(factors=23,
-                                    verbose=False)
+        recommender = ALSRecommender(factors=23)
         model = recommender.model
         model.fit(self.train_matrix)
 
