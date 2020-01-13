@@ -9,4 +9,4 @@ install:
 script:
   - coverage run -m unittest tests/test_models.py
 after_success:
-  - codecov
+  - codecov --token="5e3b96cb-c285-4ae8-ba1e-c7385ca62a60"
