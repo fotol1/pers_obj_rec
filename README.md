@@ -1,7 +1,7 @@
 # Personalized Movie Recommender
 ## Краткое описание
 
-[![Build Status](https://travis-ci.com/fotol1/pers_obj_rec.svg?branch=master)](https://travis-ci.org/fotol1/pers_obj_rec)
+[![Build Status](https://travis-ci.com/fotol1/pers_obj_rec.svg?branch=master)](https://travis-ci.org/fotol1/pers_obj_rec) [![codecov](https://codecov.io/gh/fotol1/pers_obj_rec/branch/master/graph/badge.svg)](https://codecov.io/gh/fotol1/pers_obj_rec)
 
 Репозиторий содержит проект, выполненный в рамках курса "Архитектура, дизайн и процесс разработки ПО". Реализация выполнена на `Python3.6` с помощью фреймворка `Flask`.
 
