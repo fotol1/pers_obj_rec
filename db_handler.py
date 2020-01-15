@@ -13,18 +13,34 @@ class DBHandler:
     def __init__(self):
         pass
 
-    def add_item(self, name):
+    def add_user(self, name, password):
+        user = User(name=name)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
 
+    def add_item(self, name):
         item = Item(name=name)
         db.session.add(item)
         db.session.commit()
 
     def add_provider(self, name):
-
         new_provider = Provider(name=name)
-
         db.session.add(new_provider)
         db.session.commit()
+
+    def add_interaction(self,
+                        user_id,
+                        item_id):
+
+        interaction = Interaction.query.filter_by(
+                                user_id=user_id,item_id=item_id).first()
+
+        if interaction is None:
+            new_interaction = Interaction(user_id=user_id,
+                                        item_id=item_id)
+            db.session.add(new_interaction)
+            db.session.commit()
 
     def add_movie_to_provider(self,
                               item_id,
@@ -78,6 +94,30 @@ class DBHandler:
                 db.session.add(score)
 
         db.session.commit()
+
+    def get_all_providers(self):
+        return Provider.query.all()
+
+    def get_all_items(self):
+        return Item.query.all()
+
+    def get_user_by_name(self, name):
+        return User.query.filter_by(name=name).first()
+
+    def get_user_by_id(self, user_id):
+        return User.query.filter_by(id=user_id).first()
+
+    def get_provider_by_id(self, id):
+        return Provider.query.filter_by(id=id).first()
+
+    def get_interactions_by_id(self, user_id):
+        return Interaction.query.filter_by(user_id=user_id).all()
+
+    def get_items_in_provider(self,provider_id):
+        return Items_in_Provider.query.filter_by(provider_id=provider_id).all()
+
+    def get_items_by_ids(self,movies_id):
+        return Item.query.filter(Item.id.in_(movies_id)).all()
 
 
 if __name__ == '__main__':

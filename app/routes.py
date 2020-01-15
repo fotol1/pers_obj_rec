@@ -2,57 +2,66 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, LikeForm
 from app.models import User, Item, Score, Provider, Items_in_Provider, Interaction
-from config import CINEMA_TO_SHOW
+from config import CINEMA_TO_SHOW, CURRENT_USER_FACTORS_PATH
 from recommenders.models import DumnRecommender, ALSRecommender
-
+from app.utils import find_negative_item,find_similar_user
 import numpy as np
+from db_handler import DBHandler
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET','POST'])
 # @login_required
 def index():
-    all_providers = Provider.query.all()
+
+    db_handler = DBHandler()
+    all_providers = db_handler.get_all_providers()
+
     providers_selected = np.random.choice(all_providers,
                                           size=CINEMA_TO_SHOW,
                                           replace=False)
 
     is_auth = current_user.is_authenticated
 
-    items = Item.query.all()
-    items_names = [item.name for item in items]
-    items_ids = [item.id for item in items]
-
-    similar_users = ['fff']
+    negative_item = None
+    similar_user = None
 
     if is_auth:
         user_id = current_user.id
-        interacted_items = Interaction.query.filter_by(user_id=user_id).all()
-        interacted_items_id = [item.item_id for item in interacted_items]
-        not_interacted_items_id = list(set(items_ids) - set(interacted_items_id))
-        not_interacted_items_names = Item.query.filter(Item.id.in_(not_interacted_items_id))
-        not_interacted_items_names = not_interacted_items_names.all()
-        not_interacted_items_name = np.random.choice(not_interacted_items_names)
+        negative_item = find_negative_item(user_id)
+        similar_user = find_similar_user(user_id)
 
-    items_id = {(key, value) for key, value in zip(items_ids, items_names)}
+
+    feedback = LikeForm()
+
+    if feedback.validate_on_submit():
+
+        db_handler.add_interaction(user_id=user_id,
+                                item_id=negative_item.id)
+        redirect(url_for('index'))
+
     return render_template('index.html',
                            providers=providers_selected,
-                           not_interacted_items_name=not_interacted_items_name,
-                           similar_users=similar_users,
-                           is_auth=is_auth)
+                           negative_item=negative_item,
+                           similar_user=similar_user,
+                           is_auth=is_auth,
+                           form=feedback)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    db_handler = DBHandler()
+
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
 
     if form.validate_on_submit():
-
-        user = User.query.filter_by(name=form.username.data).first()
+        user = db_handler.get_user_by_name(name=form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -66,12 +75,15 @@ def login():
 
 @app.route('/cinema')
 def cinema():
-    id = request.args.get('id')
-    provider = Provider.query.filter_by(id=id).first()
 
-    movies_in = Items_in_Provider.query.filter_by(provider_id=provider.id).all()
+    db_handler = DBHandler()
+
+    id = request.args.get('id')
+    provider = db_handler.get_provider_by_id(id=id)
+
+    movies_in = db_handler.get_items_in_provider(provider_id=provider.id)
     movies_id = [movie.id for movie in movies_in]
-    movies_obj = Item.query.filter(Item.id.in_(movies_id)).all()
+    movies_obj = db_handler.get_items_by_ids(movies_id)
 
     auth = current_user.is_authenticated
     """ We are going to sort movies for user """
@@ -85,7 +97,8 @@ def cinema():
     return render_template('cinema.html',
                            provider=provider,
                            movies=movies_obj,
-                           auth=auth)
+                           auth=auth,
+                           len_movies = len(movies_obj))
 
 
 @app.route('/logout')
@@ -96,14 +109,17 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
+    db_handler = DBHandler()
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(name=form.name.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+
+        db_handler.add_user(name=form.name.data,
+                            password=form.password.data)
+
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)

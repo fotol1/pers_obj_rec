@@ -19,15 +19,16 @@
 
 {%if is_auth %}
 <h2><p> Вам нравится этот фильм? </p></h2>
-{{not_interacted_items_name.name}}
+{{negative_item.name}}
+<form action="" method="post">
+{{ form.hidden_tag() }}
+
+{{ form.submit() }}
+</form>
+
+<h2><p> Пользователь, похожий на Вас </p></h2>
+<div><p>{{similar_user.name}} </p></div>
 {% endif %}
-
-
-<h2><p> Пользователи, похожие на Вас </p></h2>
-
-{% for user in similar_users %}
-<div><p>{{user}} </p></div>
-{% endfor %}
 
 
 {% endblock %}

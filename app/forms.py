@@ -14,7 +14,7 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
-class Like(FlaskForm):
+class LikeForm(FlaskForm):
     """
     Форма для сбора предпочтений пользователей
     """

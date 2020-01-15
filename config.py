@@ -16,3 +16,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 CINEMA_TO_SHOW = 3
+
+CURRENT_USER_FACTORS_PATH = 'recommenders/als_user_factors.npy'
+CURRENT_ITEM_FACTORS_PATH = 'recommenders/als_item_factors.npy'
