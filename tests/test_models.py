@@ -6,6 +6,7 @@ import numpy as np
 
 from recommenders.models import DumnRecommender, ALSRecommender
 
+
 class TestScoring(unittest.TestCase):
     def setUp(self):
 
@@ -17,10 +18,9 @@ class TestScoring(unittest.TestCase):
         items = np.random.randint(0, num_items, num_data)
         interactions = np.ones(num_data)
 
-        self.train_matrix = sps.csr_matrix((interactions,
-                                            (users, items)),
-                                            shape=(num_users, num_items))
-
+        self.train_matrix = sps.csr_matrix(
+            (interactions, (users, items)), shape=(num_users, num_items)
+        )
 
     def test_train_ability(self):
 
@@ -30,7 +30,6 @@ class TestScoring(unittest.TestCase):
 
         self.assertTrue(isinstance(model.user_factors, np.ndarray))
         self.assertTrue(isinstance(model.item_factors, np.ndarray))
-
 
     def test_num_factors(self):
 
@@ -52,15 +51,15 @@ class TestScoring(unittest.TestCase):
         model = DumnRecommender()
         user_id = 2
         item_id = 4
-        score = model.predict(user_id,item_id)
+        score = model.predict(user_id, item_id)
         self.assertTrue(isinstance(score, float))
 
     def test_few_scores_dumn(self):
 
         model = DumnRecommender()
         user_id = 2
-        items_id = [4,2,5]
-        scores = model.score(user_id,items_id)
+        items_id = [4, 2, 5]
+        scores = model.score(user_id, items_id)
         self.assertTrue(isinstance(scores, list))
 
         for score in scores:

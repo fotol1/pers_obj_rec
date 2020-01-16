@@ -10,8 +10,9 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-login.login_view = 'login'
+login.login_view = "login"
 from api import bp as api_bp
-app.register_blueprint(api_bp, url_prefix='/api')
+
+app.register_blueprint(api_bp, url_prefix="/api")
 
 from app import routes, models

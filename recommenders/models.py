@@ -9,6 +9,7 @@ class BaseRecommender:
     """
     Базовый класс для всех рекомендательных моделей
     """
+
     def __init__(self):
         pass
 
@@ -23,6 +24,7 @@ class DumnRecommender(BaseRecommender):
     Простейшая модель для рекомендаций. Ранжирует товары для пользователей
     случайным образом
     """
+
     def __init__(self):
         super(DumnRecommender, self).__init__()
 
@@ -43,12 +45,7 @@ class ALSRecommender(BaseRecommender):
     "Collaborative Filtering for Implicit Feedback Datasets"
     """
 
-    def __init__(self,
-                 factors=32,
-                 regularization=0,
-                 iterations=15,
-                 num_threads=1
-                 ):
+    def __init__(self, factors=32, regularization=0, iterations=15, num_threads=1):
         """
         :param factors: Размерность пространства скрытых представлений
         :param regularization: Коээфициент регуляризации
@@ -56,19 +53,21 @@ class ALSRecommender(BaseRecommender):
         :param num_threads: Количество процессов
         """
         super(ALSRecommender, self).__init__()
-        self.model = als(factors=factors,
-                         regularization=regularization,
-                         iterations=iterations,
-                         num_threads=num_threads)
-        os.environ["OPENBLAS_NUM_THREADS"] = '1'
+        self.model = als(
+            factors=factors,
+            regularization=regularization,
+            iterations=iterations,
+            num_threads=num_threads,
+        )
+        os.environ["OPENBLAS_NUM_THREADS"] = "1"
         self.user_factors = None
         self.item_factors = None
 
         self.current_folder = os.path.dirname(os.path.abspath(__file__))
 
-    def train(self, rating_matrix,
-              user_path='als_user_factors',
-              item_path='als_item_factors'):
+    def train(
+        self, rating_matrix, user_path="als_user_factors", item_path="als_item_factors"
+    ):
         """
         Метод для обучения модели
         :param rating_matrix: scipy.sparse.csr_matrix. Матрица с положительными
@@ -77,7 +76,7 @@ class ALSRecommender(BaseRecommender):
         :param user_path: путь для сохранения представлений пользователей
         :param item_path: путь для сохранения представлений айтемов
         """
-        self.model.fit(rating_matrix)
+        self.model.fit(rating_matrix.T)
 
         general_user_path = os.path.join(self.current_folder, user_path)
         general_item_path = os.path.join(self.current_folder, item_path)
@@ -85,9 +84,9 @@ class ALSRecommender(BaseRecommender):
         np.save(general_user_path, self.model.user_factors)
         np.save(general_item_path, self.model.item_factors)
 
-    def load(self,
-             user_path=CURRENT_USER_FACTORS_PATH,
-             item_path=CURRENT_ITEM_FACTORS_PATH):
+    def load(
+        self, user_path=CURRENT_USER_FACTORS_PATH, item_path=CURRENT_ITEM_FACTORS_PATH
+    ):
         """
         Метод загружает вектора пользователей и айтемов, выученные моделью.
         Этих векторов достаточно, чтобы получить скоры для всех пар пользователей-товаров
@@ -111,6 +110,6 @@ class ALSRecommender(BaseRecommender):
         :return: скор для пары пользователь - айтем
         """
         if self.user_factors is None or self.item_factors is None:
-            raise ValueError('The model is not loaded')
+            raise ValueError("The model is not loaded")
 
         return (self.user_factors[int(user_id)] * self.item_factors[item_id]).sum()
