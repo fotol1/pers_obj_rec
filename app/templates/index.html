@@ -3,6 +3,7 @@
 
 {%if is_auth %}
 <h1>Привет, {{current_user.name}}!</h1>
+
 {% else %}
 <h1> Привет, незнакомец! </h1>
 Чтобы получить персонализированные рекомнедации необходимо
@@ -10,6 +11,15 @@
 <a href="{{ url_for('register') }}">Зарегистрироваться</a>
 
 {% endif %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
 
 <h2><p> Кинотеатры </p></h2>
 {% for provider in providers %}

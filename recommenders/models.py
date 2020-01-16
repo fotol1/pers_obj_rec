@@ -2,6 +2,7 @@
 from implicit.als import AlternatingLeastSquares as als
 import os
 import numpy as np
+from config import CURRENT_USER_FACTORS_PATH, CURRENT_ITEM_FACTORS_PATH
 
 
 class BaseRecommender:
@@ -63,9 +64,11 @@ class ALSRecommender(BaseRecommender):
         self.user_factors = None
         self.item_factors = None
 
+        self.current_folder = os.path.dirname(os.path.abspath(__file__))
+
     def train(self, rating_matrix,
-              user_path='recommenders/als_user_factors',
-              item_path='recommenders/als_item_factors'):
+              user_path='als_user_factors',
+              item_path='als_item_factors'):
         """
         Метод для обучения модели
         :param rating_matrix: scipy.sparse.csr_matrix. Матрица с положительными
@@ -76,20 +79,27 @@ class ALSRecommender(BaseRecommender):
         """
         self.model.fit(rating_matrix)
 
-        np.save(user_path, self.model.user_factors)
-        np.save(item_path, self.model.item_factors)
+        general_user_path = os.path.join(self.current_folder, user_path)
+        general_item_path = os.path.join(self.current_folder, item_path)
+
+        np.save(general_user_path, self.model.user_factors)
+        np.save(general_item_path, self.model.item_factors)
 
     def load(self,
-             user_path='recommenders/als_user_factors.npy',
-             item_path='recommenders/als_item_factors.npy'):
+             user_path=CURRENT_USER_FACTORS_PATH,
+             item_path=CURRENT_ITEM_FACTORS_PATH):
         """
         Метод загружает вектора пользователей и айтемов, выученные моделью.
         Этих векторов достаточно, чтобы получить скоры для всех пар пользователей-товаров
         :param user_path: путь до сохраненных векторов с пользователями
         :param item_path: путь до сохраненных векторов с айтемами
         """
-        self.user_factors = np.load(user_path, allow_pickle=True)
-        self.item_factors = np.load(item_path, allow_pickle=True)
+
+        general_user_path = os.path.join(self.current_folder, user_path)
+        general_item_path = os.path.join(self.current_folder, item_path)
+
+        self.user_factors = np.load(general_user_path, allow_pickle=True)
+        self.item_factors = np.load(general_item_path, allow_pickle=True)
 
     def predict(self, user_id, item_id):
         """

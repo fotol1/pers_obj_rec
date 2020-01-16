@@ -4,11 +4,12 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, LikeForm
 from app.models import User, Item, Score, Provider, Items_in_Provider, Interaction
-from config import CINEMA_TO_SHOW, CURRENT_USER_FACTORS_PATH
+from config import CINEMA_TO_SHOW, CURRENT_USER_FACTORS_PATH, flash_messages
 from recommenders.models import DumnRecommender, ALSRecommender
 from app.utils import find_negative_item,find_similar_user
 import numpy as np
 from db_handler import DBHandler
+
 
 
 @app.route('/')
@@ -33,13 +34,13 @@ def index():
         negative_item = find_negative_item(user_id)
         similar_user = find_similar_user(user_id)
 
-
     feedback = LikeForm()
 
     if feedback.validate_on_submit():
 
         db_handler.add_interaction(user_id=user_id,
                                 item_id=negative_item.id)
+        flash(flash_messages['got_feedback'])
         redirect(url_for('index'))
 
     return render_template('index.html',
@@ -55,7 +56,6 @@ def login():
 
     db_handler = DBHandler()
 
-
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -63,10 +63,11 @@ def login():
     if form.validate_on_submit():
         user = db_handler.get_user_by_name(name=form.username.data)
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash(flash_messages['invalid_login'])
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
+        flash(flash_messages['login_ok'])
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
@@ -103,6 +104,7 @@ def cinema():
 
 @app.route('/logout')
 def logout():
+    flash(flash_messages['logout'])
     logout_user()
     return redirect(url_for('index'))
 
@@ -120,6 +122,6 @@ def register():
         db_handler.add_user(name=form.name.data,
                             password=form.password.data)
 
-        flash('Congratulations, you are now a registered user!')
+        flash(flash_messages['new_user'])
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
